@@ -1,0 +1,312 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Solo RPG Companion</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+        <style>
+          /* Base scrollbar styles (will be overridden by themes) */
+          ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+          }
+          ::-webkit-scrollbar-track {
+            background: #2d3748; /* Default dark track */
+          }
+          ::-webkit-scrollbar-thumb {
+            background: #4a5568; /* Default dark thumb */
+            border-radius: 4px;
+          }
+          ::-webkit-scrollbar-thumb:hover {
+            background: #718096; /* Default dark thumb hover */
+          }
+          .error-message {
+            color: #f87171; /* red-400 */
+            background-color: #4a5568; /* slate-600 */
+            border: 1px solid #f87171; /* red-400 */
+            padding: 15px;
+            margin: 10px;
+            border-radius: 8px;
+            font-family: monospace;
+            white-space: pre-wrap;
+          }
+
+          /* Theme CSS Overrides */
+          /* Default (Dark Theme - applied via class 'dark' on html) */
+          html.dark {
+            --bg-primary: #0f172a; /* slate-900 */
+            --bg-secondary: #1e293b; /* slate-800 */
+            --bg-tertiary: #334155; /* slate-700 */
+            --bg-tertiary-hover: #475569; /* slate-600 */
+            --text-primary: #f1f5f9; /* slate-100 */
+            --text-secondary: #cbd5e1; /* slate-300 */
+            --text-muted: #94a3b8; /* slate-400 */
+            --border-primary: #475569; /* slate-600 */
+            --border-secondary: #334155; /* slate-700 */
+            --accent-sky: #38bdf8; /* sky-400 */
+            --accent-teal: #2dd4bf; /* teal-400 */
+            --accent-green: #34d399; /* green-400 */
+            --accent-red: #f87171; /* red-400 */
+            --accent-blue: #60a5fa; /* blue-400 */
+            --accent-yellow: #facc15; /* yellow-400 */
+            --accent-purple: #c084fc; /* purple-400 */
+            --button-primary-bg: var(--accent-sky);
+            --button-primary-hover-bg: #0ea5e9; /* sky-500 */
+            --button-secondary-bg: var(--accent-teal);
+            --button-secondary-hover-bg: #14b8a6; /* teal-500 */
+          }
+          html.dark ::-webkit-scrollbar-track { background: var(--bg-secondary); }
+          html.dark ::-webkit-scrollbar-thumb { background: var(--border-primary); }
+          html.dark ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+
+          /* Light Theme */
+          html.theme-light {
+            --bg-primary: #f8fafc; /* slate-50 */
+            --bg-secondary: #f1f5f9; /* slate-100 */
+            --bg-tertiary: #e2e8f0; /* slate-200 */
+            --bg-tertiary-hover: #cbd5e1; /* slate-300 */
+            --text-primary: #0f172a; /* slate-900 */
+            --text-secondary: #334155; /* slate-700 */
+            --text-muted: #64748b; /* slate-500 */
+            --border-primary: #cbd5e1; /* slate-300 */
+            --border-secondary: #94a3b8; /* slate-400 */
+            --accent-sky: #0284c7; /* sky-600 */
+            --accent-teal: #0d9488; /* teal-600 */
+            --accent-green: #16a34a; /* green-600 */
+            --accent-red: #dc2626; /* red-600 */
+            --accent-blue: #2563eb; /* blue-600 */
+            --accent-yellow: #ca8a04; /* yellow-600 */
+            --accent-purple: #7c3aed; /* purple-600 */
+            --button-primary-bg: var(--accent-sky);
+            --button-primary-hover-bg: #0369a1; /* sky-700 */
+            --button-secondary-bg: var(--accent-teal);
+            --button-secondary-hover-bg: #0f766e; /* teal-700 */
+          }
+          html.theme-light body { background-color: var(--bg-primary); color: var(--text-primary); }
+          html.theme-light ::-webkit-scrollbar-track { background: var(--bg-tertiary); }
+          html.theme-light ::-webkit-scrollbar-thumb { background: var(--border-secondary); }
+          html.theme-light ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+          /* Earth Theme */
+          html.theme-earth {
+            --bg-primary: #2a2017; 
+            --bg-secondary: #4d4033;
+            --bg-tertiary: #6b5a4c;
+            --bg-tertiary-hover: #5a442b; 
+            --text-primary: #f3eade;
+            --text-secondary: #d4c2ad;
+            --text-muted: #a18870;
+            --border-primary: #806040;
+            --border-secondary: #5a442b;
+            --accent-amber: #f59e0b; /* amber-500 */
+            --accent-lime: #65a30d; /* lime-600 */
+            --accent-sky: var(--accent-amber); /* Re-map sky to amber for earth */
+            --accent-teal: var(--accent-lime); /* Re-map teal to lime for earth */
+            --accent-green: #84cc16; /* lime-500 */
+            --accent-red: #ef4444; /* red-500 */
+            --accent-blue: #60a5fa; /* blue-400 */
+            --accent-yellow: #facc15; /* yellow-400 */
+            --accent-purple: #c084fc; /* purple-400 */
+            --button-primary-bg: var(--accent-amber);
+            --button-primary-hover-bg: #d97706; /* amber-600 */
+            --button-secondary-bg: var(--accent-lime);
+            --button-secondary-hover-bg: #4d7c0f; /* lime-700 */
+          }
+          html.theme-earth body { background-color: var(--bg-primary); color: var(--text-primary); }
+          html.theme-earth ::-webkit-scrollbar-track { background: var(--bg-secondary); }
+          html.theme-earth ::-webkit-scrollbar-thumb { background: var(--border-primary); }
+          html.theme-earth ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+          /* Pastel Theme */
+          html.theme-pastel {
+            --bg-primary: #eff6ff; /* blue-50 */
+            --bg-secondary: #f5f3ff; /* violet-50 */
+            --bg-tertiary: #fdf2f8; /* pink-50 */
+            --bg-tertiary-hover: #fbcfe8; /* pink-100 */
+            --text-primary: #374151; /* gray-700 */
+            --text-secondary: #4b5563; /* gray-600 */
+            --text-muted: #6b7280; /* gray-500 */
+            --border-primary: #d1d5db; /* gray-300 */
+            --border-secondary: #9ca3af; /* gray-400 */
+            --accent-sky: #7dd3fc; /* sky-300 */
+            --accent-violet: #c4b5fd; /* violet-300 */
+            --accent-teal: var(--accent-violet); /* Re-map teal to violet for pastel */
+            --accent-green: #a7f3d0; /* green-200 */
+            --accent-red: #fda4af; /* rose-300 */
+            --accent-blue: #93c5fd; /* blue-300 */
+            --accent-yellow: #fde047; /* yellow-300 */
+            --accent-purple: #d8b4fe; /* purple-400 */
+            --button-primary-bg: var(--accent-sky);
+            --button-primary-hover-bg: #38bdf8; /* sky-400 */
+            --button-secondary-bg: var(--accent-violet);
+            --button-secondary-hover-bg: #a78bfa; /* violet-400 */
+          }
+          html.theme-pastel body { background-color: var(--bg-primary); color: var(--text-primary); }
+          html.theme-pastel ::-webkit-scrollbar-track { background: var(--bg-tertiary); }
+          html.theme-pastel ::-webkit-scrollbar-thumb { background: var(--border-secondary); }
+          html.theme-pastel ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+          /* Generic Overrides based on CSS variables */
+          .bg-primary { background-color: var(--bg-primary) !important; }
+          .bg-secondary { background-color: var(--bg-secondary) !important; }
+          .bg-tertiary { background-color: var(--bg-tertiary) !important; }
+          .hover\\:bg-tertiary-hover:hover { background-color: var(--bg-tertiary-hover) !important; }
+          .text-primary { color: var(--text-primary) !important; }
+          .text-secondary { color: var(--text-secondary) !important; }
+          .text-muted { color: var(--text-muted) !important; }
+          .border-primary { border-color: var(--border-primary) !important; }
+          .border-secondary { border-color: var(--border-secondary) !important; }
+          
+          .accent-sky-text { color: var(--accent-sky) !important; }
+          .accent-teal-text { color: var(--accent-teal) !important; }
+          .accent-green-text { color: var(--accent-green) !important; }
+          .accent-red-text { color: var(--accent-red) !important; }
+          .accent-blue-text { color: var(--accent-blue) !important; }
+          .accent-yellow-text { color: var(--accent-yellow) !important; }
+          .accent-purple-text { color: var(--accent-purple) !important; }
+
+          .accent-sky-bg { background-color: var(--accent-sky) !important; color: var(--text-primary) !important; }
+          .accent-sky-bg-hover:hover { background-color: var(--button-primary-hover-bg) !important; }
+          .hover\\:accent-sky-bg-hover:hover { background-color: var(--button-primary-hover-bg) !important; } /* Ensure hover on buttons with variable bg */
+          .accent-teal-bg { background-color: var(--accent-teal) !important; }
+          .accent-teal-bg-hover:hover { background-color: var(--button-secondary-hover-bg) !important; }
+          .hover\\:accent-teal-bg-hover:hover { background-color: var(--button-secondary-hover-bg) !important; }
+          .accent-green-bg { background-color: var(--accent-green) !important; }
+          .accent-red-bg { background-color: var(--accent-red) !important; }
+          .accent-blue-bg { background-color: var(--accent-blue) !important; }
+          .accent-purple-bg { background-color: var(--accent-purple) !important; }
+
+
+          /* Overriding Tailwind classes: This list needs to be comprehensive for all themes */
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .bg-slate-900 { background-color: var(--bg-primary) !important; }
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .text-slate-100 { color: var(--text-primary) !important; }
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .bg-slate-800 { background-color: var(--bg-secondary) !important; }
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .bg-slate-800\\/80 { background-color: color-mix(in srgb, var(--bg-secondary) 80%, transparent) !important; }
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .bg-slate-800\\/50 { background-color: color-mix(in srgb, var(--bg-secondary) 50%, transparent) !important; }
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .bg-slate-700 { background-color: var(--bg-tertiary) !important; }
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .hover\\:bg-slate-600:hover { background-color: var(--bg-tertiary-hover) !important; }
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .hover\\:bg-slate-600\\/70:hover { background-color: color-mix(in srgb, var(--bg-tertiary-hover) 70%, transparent) !important;}
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .bg-slate-700\\/70 { background-color: color-mix(in srgb, var(--bg-tertiary) 70%, transparent) !important; }
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .bg-slate-600 { background-color: color-mix(in srgb, var(--bg-tertiary) 90%, black 5%) !important; /* A bit darker than tertiary */ }
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .hover\\:bg-slate-500:hover { background-color: color-mix(in srgb, var(--bg-tertiary-hover) 90%, black 5%) !important; }
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .bg-slate-600\\/50 { background-color: color-mix(in srgb, var(--bg-tertiary) 45%, black 2.5%, transparent) !important; }
+
+
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .text-slate-200 { color: var(--text-primary) !important; } /* was text-slate-100 for dark */
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .text-slate-300 { color: var(--text-secondary) !important; }
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .text-slate-400 { color: var(--text-muted) !important; }
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .text-slate-500 { color: var(--border-secondary) !important; } /* Used for icon placeholders */
+
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .border-slate-600 { border-color: var(--border-primary) !important; }
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .border-slate-500 { border-color: var(--border-secondary) !important; }
+          
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .text-sky-300 { color: var(--accent-sky) !important; }
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .text-sky-400 { color: var(--accent-sky) !important; }
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .hover\\:text-sky-300:hover { color: color-mix(in srgb, var(--accent-sky) 80%, black) !important; }
+          
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .text-teal-300 { color: var(--accent-teal) !important; }
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .bg-teal-600 { background-color: var(--accent-teal) !important; color: var(--text-primary) !important;}
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .hover\\:bg-teal-500:hover { background-color: var(--button-secondary-hover-bg) !important; color: var(--text-primary) !important;}
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .bg-sky-600 { background-color: var(--accent-sky) !important; color: var(--text-primary) !important;}
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .hover\\:bg-sky-500:hover { background-color: var(--button-primary-hover-bg) !important; color: var(--text-primary) !important;}
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .bg-sky-700 { background-color: color-mix(in srgb, var(--accent-sky) 90%, black 10%) !important; }
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .hover\\:bg-sky-600:hover { background-color: var(--accent-sky) !important; }
+
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .text-red-300 { color: var(--accent-red) !important; }
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .text-red-400 { color: var(--accent-red) !important; }
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .hover\\:text-red-300:hover { color: color-mix(in srgb, var(--accent-red) 80%, black) !important; }
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .bg-red-900\\/50 { background-color: color-mix(in srgb, var(--accent-red) 50%, transparent) !important; }
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .border-red-700 { border-color: var(--accent-red) !important; }
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .bg-red-600 { background-color: var(--accent-red) !important; color: var(--text-primary) !important;}
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .hover\\:bg-red-500:hover { background-color: color-mix(in srgb, var(--accent-red) 85%, black 15%) !important; color: var(--text-primary) !important;}
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .bg-red-700 { background-color: color-mix(in srgb, var(--accent-red) 90%, black 10%) !important; }
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .hover\\:bg-red-600:hover { background-color: var(--accent-red) !important; }
+
+
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .bg-green-600 { background-color: var(--accent-green) !important; color: var(--text-primary) !important;}
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .hover\\:bg-green-500:hover { background-color: color-mix(in srgb, var(--accent-green) 85%, black 15%) !important; color: var(--text-primary) !important;}
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .bg-green-700 { background-color: color-mix(in srgb, var(--accent-green) 90%, black 10%) !important; }
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .hover\\:bg-green-600:hover { background-color: var(--accent-green) !important; }
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .text-green-400 { color: var(--accent-green) !important; }
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .hover\\:text-green-300:hover {  color: color-mix(in srgb, var(--accent-green) 80%, black) !important; }
+
+
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .focus\\:ring-sky-500:focus { --tw-ring-color: var(--accent-sky) !important; }
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .focus\\:border-sky-500:focus { border-color: var(--accent-sky) !important; }
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .form-checkbox.text-sky-500 { color: var(--accent-sky) !important; }
+          
+          :is(html.theme-light, html.theme-earth, html.theme-pastel) .hover\\:bg-purple-500:hover { background-color: color-mix(in srgb, var(--accent-purple) 85%, black 15%) !important;}
+
+          .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+          }
+          .custom-scrollbar::-webkit-scrollbar-track {
+            background: var(--bg-tertiary);
+            border-radius: 3px;
+          }
+          .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: var(--border-secondary);
+            border-radius: 3px;
+          }
+          .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+          }
+
+          .rulebook-section-list-item {
+            padding: 0.5rem 0.75rem;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-primary);
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+          }
+          .rulebook-section-list-item:last-child {
+            border-bottom: none;
+          }
+          .rulebook-section-list-item:hover {
+            background-color: var(--bg-tertiary-hover);
+            color: var(--text-primary);
+          }
+          .rulebook-section-list-item.selected {
+            background-color: var(--accent-sky);
+            color: var(--text-primary); /* Or a contrasting color for the accent */
+            font-weight: 600;
+          }
+          .text-xxs { font-size: 0.65rem; line-height: 0.85rem; } /* Extra small text size */
+        </style>
+      <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.1.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+      <body class="bg-primary text-primary">
+        <div id="root">
+          <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; flex-direction: column; font-family: sans-serif;">
+            <svg class="animate-spin h-12 w-12 text-slate-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <p class="text-slate-500 mt-4 text-lg">アプリケーションを読み込み中...</p>
+          </div>
+        </div>
+        <noscript>
+          <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; flex-direction: column; font-family: sans-serif; background-color: #0f172a; color: #f1f5f9;">
+            <h1 style="font-size: 2em; margin-bottom: 1rem;">JavaScriptが必要です</h1>
+            <p style="font-size: 1.2em;">このアプリケーションを実行するにはJavaScriptを有効にしてください。</p>
+            <p style="margin-top: 2rem; font-size: 0.9em; color: #94a3b8;">(Solo RPG Companion)</p>
+          </div>
+        </noscript>
+        <script type="module" src="dist/bundle.js"></script>
+      <script type="module" src="/index.tsx"></script>
+</body>
+    </html>

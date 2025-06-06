@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "outDir": "./",
+    "jsx": "react",
+    "module": "es6",
+    "target": "es6",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "allowJs": true
+  },
+  "include": [
+    "index.tsx",
+    "components/Icons.tsx",
+    "constants.ts"
+  ]
+}

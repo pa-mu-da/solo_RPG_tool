@@ -1,0 +1,16 @@
+{
+  "name": "solo-rpg-companion",
+  "version": "1.0.0",
+  "description": "A tool to assist with playing solo role-playing games.",
+  "scripts": {
+    "build": "esbuild index.tsx --bundle --outfile=dist/bundle.js --sourcemap --minify --format=esm --platform=browser --jsx=automatic",
+    "serve": "esbuild index.tsx --bundle --outfile=dist/bundle.js --servedir=. --format=esm --platform=browser --jsx=automatic --sourcemap --watch"
+  },
+  "dependencies": {
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.23.0"
+  }
+}
