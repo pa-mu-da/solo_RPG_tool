@@ -295,8 +295,8 @@
     
     // --- Content from components/CharacterSheetEditor.tsx ---
     const CharacterSheetEditor = ({ data, onChange }) => {
-      const handleStatsLabelChange = (e) => {
-        onChange({ ...data, statsLabel: e.target.value });
+      const handleFieldChange = (e) => {
+        onChange({ ...data, [e.target.name]: e.target.value });
       };
 
       const handleCustomFieldsChange = (newCustomFields) => {
@@ -315,9 +315,22 @@
             <input
               type="text"
               id="statsLabelCS"
+              name="statsLabel"
               value={data.statsLabel}
-              onChange={handleStatsLabelChange}
+              onChange={handleFieldChange}
               className="w-full p-2 bg-slate-700 border border-slate-600 rounded-md focus:ring-sky-500 focus:border-sky-500 text-slate-100"
+            />
+          </FormField>
+          
+          <FormField label="能力値・詳細の初期内容" id="defaultStatsContentCS">
+            <textarea
+              id="defaultStatsContentCS"
+              name="defaultStatsContent"
+              value={data.defaultStatsContent || ''}
+              onChange={handleFieldChange}
+              rows={4}
+              className="w-full p-2 bg-slate-700 border border-slate-600 rounded-md focus:ring-sky-500 focus:border-sky-500 text-slate-100"
+              placeholder="例:\nSTR: \nDEX: \nINT: \nVIT: \nスキル1: \nスキル2:"
             />
           </FormField>
 
@@ -639,6 +652,7 @@
       },
       characterSheetTemplate: {
         statsLabel: "能力値・詳細",
+        defaultStatsContent: "STR: \nDEX: \nINT: \nCON: \nAPP: \nPOW: \nEDU: \nSIZ: \nSAN: \n幸運: \nアイデア: \n知識: \nHP: \nMP: \nダメージボーナス: ",
         customFieldTemplates: [
           {
             id: generateUniqueId("cft_background"),
@@ -650,7 +664,6 @@
             label: "装備",
             type: CustomFieldType.TEXTAREA // Ensure type is TEXTAREA
           }
-          // "所持金" (Gold/Money) entry removed
         ]
       },
       rulebookSections: [
@@ -743,7 +756,12 @@
       
       const loadExampleData = () => {
         const exampleDataCopy = JSON.parse(JSON.stringify(initialSrgdData)); 
-        exampleDataCopy.manifest.gameTitle = initialSrgdData.manifest.gameTitle;
+        exampleDataCopy.manifest.gameTitle = initialSrgdData.manifest.gameTitle; // Keep the original example title
+
+        // Ensure character sheet template defaultStatsContent is correctly copied or set
+        exampleDataCopy.characterSheetTemplate.statsLabel = initialSrgdData.characterSheetTemplate.statsLabel;
+        exampleDataCopy.characterSheetTemplate.defaultStatsContent = initialSrgdData.characterSheetTemplate.defaultStatsContent;
+
 
         if (exampleDataCopy.characterSheetTemplate.customFieldTemplates) {
           exampleDataCopy.characterSheetTemplate.customFieldTemplates.forEach(cft => {
@@ -836,7 +854,7 @@
             </CollapsibleSection>
             
             <div className="mt-8 text-center text-slate-500 text-sm">
-              SRGDエディタ v1.0.0
+              SRGDエディタ v1.0.1
             </div>
           </div>
         </div>
